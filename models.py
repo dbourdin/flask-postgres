@@ -22,6 +22,17 @@ class User(db.Model):
         db.session.commit()
         return user
 
+    @classmethod
+    def delete_user(cls, id):
+        user = cls.query.get(id)
+        db.session.delete(user)
+        db.session.commit()
+
+    def update_user(self, name=None, email=None):
+        self.name = name if name else self.name
+        self.email = email if email else self.email
+        db.session.commit()
+
 
 class UserSchema(ma.Schema):
     class Meta:
