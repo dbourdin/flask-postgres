@@ -33,8 +33,8 @@ class User(db.Model):
             return
 
     @classmethod
-    def delete_user(cls, id):
-        user = cls.query.get(id)
+    def delete_user(cls, user_id):
+        user = cls.query.get(user_id)
         db.session.delete(user)
         db.session.commit()
 
