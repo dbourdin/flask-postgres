@@ -8,10 +8,8 @@ API_IP = '0.0.0.0'
 API_PORT = 1212
 
 # DB Config
-DB_USER = 'postgres'
-DB_PASSWD = 'postgres'
+DB_USER = 'root'
+DB_PASSWD = 'password'
 DB_HOST = 'localhost'
 DB_NAME = 'flask_postgres'
-DB_CONNECTION_STRING = (
-    f'postgresql+psycopg2://{DB_USER}:{DB_PASSWD}@{DB_HOST}/{DB_NAME}'
-)
+DB_CONNECTION_STRING = f'mysql://{DB_USER}:{DB_PASSWD}@{DB_HOST}/{DB_NAME}'
