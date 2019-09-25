@@ -10,8 +10,8 @@ from gevent.pywsgi import WSGIServer
 import logbook
 
 import config
+import database
 from api import blueprint
-from database import db_session
 
 
 # Create log directory
@@ -36,7 +36,7 @@ wsgi_server = WSGIServer((config.API_IP, config.API_PORT), app,
 
 @app.teardown_appcontext
 def shutdown_session(exception=None):
-    db_session.remove()
+    database.db_session.remove()
 
 
 def signal_handler(signal, frame):
@@ -52,8 +52,10 @@ def _register_signal_handler():
 
 
 def start_server():
+    logger.info('Initializing DB')
+    database.init_db()
+    logger.info('DB initialized')
     logger.info('Started')
     _register_signal_handler()
     wsgi_server.serve_forever()
     logger.info('Exited')
-
