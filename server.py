@@ -11,6 +11,8 @@ import logbook
 
 import config
 from api import blueprint
+from database import db_session
+
 
 # Create log directory
 pathlib.Path(config.LOG_PATH).mkdir(parents=True, exist_ok=True)
@@ -30,6 +32,11 @@ CORS(app)
 wsgi_logger = LoggingLogAdapter(logging.getLogger('wsgi'), level=logging.DEBUG)
 wsgi_server = WSGIServer((config.API_IP, config.API_PORT), app,
                          log=wsgi_logger, error_log=wsgi_logger)
+
+
+@app.teardown_appcontext
+def shutdown_session(exception=None):
+    db_session.remove()
 
 
 def signal_handler(signal, frame):
