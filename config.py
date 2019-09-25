@@ -12,3 +12,6 @@ DB_USER = 'postgres'
 DB_PASSWD = 'postgres'
 DB_HOST = 'localhost'
 DB_NAME = 'flask_postgres'
+DB_CONNECTION_STRING = (
+    f'postgresql+psycopg2://{DB_USER}:{DB_PASSWD}@{DB_HOST}/{DB_NAME}'
+)
