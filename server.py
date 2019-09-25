@@ -10,8 +10,7 @@ from gevent.pywsgi import WSGIServer
 import logbook
 
 import config
-import database
-from api import blueprint
+from api import users_blueprint
 from flask_marshmallow import Marshmallow
 from flask_sqlalchemy import SQLAlchemy
 
@@ -28,10 +27,10 @@ logging.root.setLevel(config.LOGLEVEL)
 logger = logbook.Logger('[SERVER]', getattr(logbook, config.LOGLEVEL))
 
 app = Flask('flask')
-app.register_blueprint(blueprint)
+app.register_blueprint(users_blueprint)
 CORS(app)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = database.connection_string
+app.config['SQLALCHEMY_DATABASE_URI'] = config.DB_CONNECTION_STRING
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
@@ -40,11 +39,6 @@ ma = Marshmallow(app)
 wsgi_logger = LoggingLogAdapter(logging.getLogger('wsgi'), level=logging.DEBUG)
 wsgi_server = WSGIServer((config.API_IP, config.API_PORT), app,
                          log=wsgi_logger, error_log=wsgi_logger)
-
-
-@app.teardown_appcontext
-def shutdown_session(exception=None):
-    database.db_session.remove()
 
 
 def signal_handler(signal, frame):
@@ -61,7 +55,7 @@ def _register_signal_handler():
 
 def start_server():
     logger.info('Initializing DB')
-    database.init_db()
+    db.create_all()
     logger.info('DB initialized')
     logger.info('Started')
     _register_signal_handler()
