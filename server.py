@@ -4,6 +4,7 @@ import signal
 import sys
 
 import logbook
+from flask import jsonify
 from gevent.pywsgi import LoggingLogAdapter
 from gevent.pywsgi import WSGIServer
 from sqlalchemy_utils import create_database
@@ -30,6 +31,16 @@ wsgi_server = WSGIServer((config.API_IP, config.API_PORT), app,
                          log=wsgi_logger, error_log=wsgi_logger)
 
 app.register_blueprint(users_blueprint)
+
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return jsonify(error=404, text=str(e)), 404
+
+
+@app.errorhandler(500)
+def internal_server_error(e):
+    return jsonify(error=500, text=str(e)), 500
 
 
 def _create_db():
