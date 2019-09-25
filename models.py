@@ -45,6 +45,7 @@ class User(db.Model):
 
 
 class UserSchema(ma.Schema):
+    id = fields.UUID(dump_only=True)
     name = fields.String(required=True,
                          error_messages={'required': 'Name is required.'})
     email = fields.String(required=True,
