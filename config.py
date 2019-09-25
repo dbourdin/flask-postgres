@@ -6,3 +6,9 @@ LOGLEVEL = 'DEBUG'
 # API Config
 API_IP = '0.0.0.0'
 API_PORT = 1212
+
+# DB Config
+DB_USER = 'postgres'
+DB_PASSWD = 'postgres'
+DB_HOST = 'localhost'
+DB_NAME = 'flask_postgres'
