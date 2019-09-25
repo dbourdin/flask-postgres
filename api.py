@@ -36,17 +36,15 @@ def list_users():
 
 @users_blueprint.route('/<int:user_id>', methods=['GET'])
 def get_user(user_id):
-    user = User.query.get(user_id)
-    if not user:
-        return jsonify(f'User with id {user_id} does not exist'), 404
-    return user_schema.jsonify(User.query.get(user_id))
+    user = User.query.get_or_404(user_id,
+                                 f'User with id {user_id} does not exist')
+    return user_schema.jsonify(user)
 
 
 @users_blueprint.route('/<int:user_id>', methods=['PUT'])
 def update_user(user_id):
-    user = User.query.get(user_id)
-    if not user:
-        return jsonify(f'User with id {user_id} does not exist'), 404
+    user = User.query.get_or_404(user_id,
+                                 f'User with id {user_id} does not exist')
     user.update_user(**request.json)
     return user_schema.jsonify(user)
 
