@@ -1,6 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy_utils import database_exists, create_database
 
 import config
 
@@ -9,6 +10,8 @@ connection_string = (
     f'{config.DB_USER}:{config.DB_PASSWD}@{config.DB_HOST}/{config.DB_NAME}'
 )
 engine = create_engine(connection_string, convert_unicode=True)
+if not database_exists(engine.url):
+    create_database(engine.url)
 db_session = scoped_session(sessionmaker(autocommit=False,
                                          autoflush=False,
                                          bind=engine))
