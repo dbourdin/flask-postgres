@@ -1,5 +1,5 @@
-from server import db
-from server import ma
+from app import db
+from app import ma
 
 
 class User(db.Model):
@@ -14,6 +14,13 @@ class User(db.Model):
 
     def __repr__(self):
         return f'<User {self.name}>'
+
+    @classmethod
+    def create_user(cls, name, email):
+        user = User(name, email)
+        db.session.add(user)
+        db.session.commit()
+        return user
 
 
 class UserSchema(ma.Schema):
