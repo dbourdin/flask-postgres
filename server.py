@@ -3,14 +3,16 @@ import pathlib
 import signal
 import sys
 
+import logbook
+from flask import Blueprint
 from flask import Flask
 from flask_cors import CORS
 from gevent.pywsgi import LoggingLogAdapter
 from gevent.pywsgi import WSGIServer
-import logbook
+from sqlalchemy_utils import create_database
+from sqlalchemy_utils import database_exists
 
 import config
-from api import users_blueprint
 from flask_marshmallow import Marshmallow
 from flask_sqlalchemy import SQLAlchemy
 
@@ -27,6 +29,7 @@ logging.root.setLevel(config.LOGLEVEL)
 logger = logbook.Logger('[SERVER]', getattr(logbook, config.LOGLEVEL))
 
 app = Flask('flask')
+users_blueprint = Blueprint('users', __name__, url_prefix='/users')
 app.register_blueprint(users_blueprint)
 CORS(app)
 
@@ -41,9 +44,11 @@ wsgi_server = WSGIServer((config.API_IP, config.API_PORT), app,
                          log=wsgi_logger, error_log=wsgi_logger)
 
 
-def signal_handler(signal, frame):
-    logger.info('Exiting...')
-    wsgi_server.stop()
+def _create_db():
+    if not database_exists(config.DB_CONNECTION_STRING):
+        logger.debug('DB does not exist... Creating DB')
+        create_database(config.DB_CONNECTION_STRING)
+        logger.debug('DB created')
 
 
 def _register_signal_handler():
@@ -53,8 +58,14 @@ def _register_signal_handler():
     signal.siginterrupt(signal.SIGTERM, False)
 
 
+def signal_handler(signal, frame):
+    logger.info('Exiting...')
+    wsgi_server.stop()
+
+
 def start_server():
     logger.info('Initializing DB')
+    _create_db()
     db.create_all()
     logger.info('DB initialized')
     logger.info('Started')
