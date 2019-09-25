@@ -12,6 +12,8 @@ import logbook
 import config
 import database
 from api import blueprint
+from flask_marshmallow import Marshmallow
+from flask_sqlalchemy import SQLAlchemy
 
 
 # Create log directory
@@ -28,6 +30,12 @@ logger = logbook.Logger('[SERVER]', getattr(logbook, config.LOGLEVEL))
 app = Flask('flask')
 app.register_blueprint(blueprint)
 CORS(app)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = database.connection_string
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+db = SQLAlchemy(app)
+ma = Marshmallow(app)
 
 wsgi_logger = LoggingLogAdapter(logging.getLogger('wsgi'), level=logging.DEBUG)
 wsgi_server = WSGIServer((config.API_IP, config.API_PORT), app,
