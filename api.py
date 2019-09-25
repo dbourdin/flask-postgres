@@ -21,7 +21,7 @@ users_schema = UserSchema(many=True)
 def create_user():
     user_data = request.json
     new_user = User.create_user(**user_data)
-    return user_schema.jsonify(new_user)
+    return user_schema.jsonify(new_user), 201
 
 
 @users_blueprint.route('/', methods=['GET'])
@@ -29,19 +29,19 @@ def list_users():
     return jsonify(users_schema.dump(User.query.all()))
 
 
-@users_blueprint.route('/<id>', methods=['GET'])
-def get_user(id):
-    return user_schema.jsonify(User.query.get(id))
+@users_blueprint.route('/<user_id>', methods=['GET'])
+def get_user(user_id):
+    return user_schema.jsonify(User.query.get(user_id))
 
 
-@users_blueprint.route('/<id>', methods=['PUT'])
-def update_user(id):
-    user = User.query.get(id)
+@users_blueprint.route('/<user_id>', methods=['PUT'])
+def update_user(user_id):
+    user = User.query.get(user_id)
     user.update_user(**request.json)
     return user_schema.jsonify(user)
 
 
 @users_blueprint.route('/<id>', methods=['DELETE'])
-def delete_user(id):
-    User.delete_user(id)
+def delete_user(user_id):
+    User.delete_user(user_id)
     return jsonify(), 204
