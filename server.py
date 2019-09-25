@@ -4,18 +4,15 @@ import signal
 import sys
 
 import logbook
-from flask import Blueprint
-from flask import Flask
-from flask_cors import CORS
 from gevent.pywsgi import LoggingLogAdapter
 from gevent.pywsgi import WSGIServer
 from sqlalchemy_utils import create_database
 from sqlalchemy_utils import database_exists
 
 import config
-from flask_marshmallow import Marshmallow
-from flask_sqlalchemy import SQLAlchemy
-
+from api import users_blueprint
+from app import app
+from app import db
 
 # Create log directory
 pathlib.Path(config.LOG_PATH).mkdir(parents=True, exist_ok=True)
@@ -28,20 +25,11 @@ logging.root.setLevel(config.LOGLEVEL)
 
 logger = logbook.Logger('[SERVER]', getattr(logbook, config.LOGLEVEL))
 
-app = Flask('flask')
-users_blueprint = Blueprint('users', __name__, url_prefix='/users')
-app.register_blueprint(users_blueprint)
-CORS(app)
-
-app.config['SQLALCHEMY_DATABASE_URI'] = config.DB_CONNECTION_STRING
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-db = SQLAlchemy(app)
-ma = Marshmallow(app)
-
 wsgi_logger = LoggingLogAdapter(logging.getLogger('wsgi'), level=logging.DEBUG)
 wsgi_server = WSGIServer((config.API_IP, config.API_PORT), app,
                          log=wsgi_logger, error_log=wsgi_logger)
+
+app.register_blueprint(users_blueprint)
 
 
 def _create_db():
