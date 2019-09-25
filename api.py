@@ -36,6 +36,8 @@ def list_users():
 
 @users_blueprint.route('/<user_id>', methods=['GET'])
 def get_user(user_id):
+    if type(user_id) != int:
+        return jsonify(f'Invalid user id: {user_id}'), 400
     user = User.query.get(user_id)
     if not user:
         return jsonify(f'User with id {user_id} does not exist'), 404
