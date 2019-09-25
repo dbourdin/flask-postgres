@@ -10,6 +10,7 @@ from gevent.pywsgi import WSGIServer
 import logbook
 
 import config
+from api import blueprint
 
 # Create log directory
 pathlib.Path(config.LOG_PATH).mkdir(parents=True, exist_ok=True)
