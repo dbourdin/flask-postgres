@@ -34,24 +34,24 @@ def list_users():
     return jsonify(users_schema.dump(User.query.all()))
 
 
-@users_blueprint.route('/<user_id>', methods=['GET'])
+@users_blueprint.route('/<int:user_id>', methods=['GET'])
 def get_user(user_id):
-    if type(user_id) != int:
-        return jsonify(f'Invalid user id: {user_id}'), 400
     user = User.query.get(user_id)
     if not user:
         return jsonify(f'User with id {user_id} does not exist'), 404
     return user_schema.jsonify(User.query.get(user_id))
 
 
-@users_blueprint.route('/<user_id>', methods=['PUT'])
+@users_blueprint.route('/<int:user_id>', methods=['PUT'])
 def update_user(user_id):
     user = User.query.get(user_id)
+    if not user:
+        return jsonify(f'User with id {user_id} does not exist'), 404
     user.update_user(**request.json)
     return user_schema.jsonify(user)
 
 
-@users_blueprint.route('/<id>', methods=['DELETE'])
+@users_blueprint.route('/<int:user_id>', methods=['DELETE'])
 def delete_user(user_id):
     User.delete_user(user_id)
     return jsonify(), 204
