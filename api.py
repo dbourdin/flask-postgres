@@ -20,7 +20,12 @@ users_schema = UserSchema(many=True)
 @users_blueprint.route('/', methods=['POST'])
 def create_user():
     user_data = request.json
+    errors = user_schema.validate(user_data)
+    if errors:
+        return jsonify(errors), 400
     new_user = User.create_user(**user_data)
+    if not new_user:
+        return jsonify(f'User {user_data["name"]} could not be created'), 400
     return user_schema.jsonify(new_user), 201
 
 
