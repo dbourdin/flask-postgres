@@ -35,8 +35,11 @@ class User(db.Model):
     @classmethod
     def delete_user(cls, user_id):
         user = cls.query.get(user_id)
-        db.session.delete(user)
-        db.session.commit()
+        if user:
+            db.session.delete(user)
+            db.session.commit()
+            return True
+        return False
 
     def update_user(self, name=None, email=None):
         self.name = name if name else self.name

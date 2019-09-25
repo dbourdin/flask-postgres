@@ -51,5 +51,6 @@ def update_user(user_id):
 
 @users_blueprint.route('/<int:user_id>', methods=['DELETE'])
 def delete_user(user_id):
-    User.delete_user(user_id)
+    if not User.delete_user(user_id):
+        return jsonify(f'Could not delete user {user_id}'), 400
     return jsonify(), 204
