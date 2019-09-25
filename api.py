@@ -30,8 +30,11 @@ def create_user():
 
 
 @users_blueprint.route('/', methods=['GET'])
-def list_users():
-    return jsonify(users_schema.dump(User.query.all()))
+def list_users(page=1, per_page=5):
+    page = int(request.args.get('page', page))
+    per_page = int(request.args.get('per_page', per_page))
+    users = User.query.paginate(page, per_page, error_out=False)
+    return jsonify(users_schema.dump(users.items))
 
 
 @users_blueprint.route('/<int:user_id>', methods=['GET'])
