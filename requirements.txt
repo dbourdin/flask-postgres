@@ -1,5 +1,7 @@
 Flask==1.1.1
 Flask-Cors==3.0.8
+flask-marshmallow==0.10.1
+Flask-SQLAlchemy==2.4.1
 gevent==1.4.0
 Logbook==1.5.2
 psycopg2==2.8.3
